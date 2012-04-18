@@ -14,11 +14,14 @@ headers = {
     'Accept-Language': 'en-US,en;q=0.8',
     'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3'}
 
+
 class LoginException(Exception):
     pass
 
+
 class RequestException(Exception):
     pass
+
 
 class WhatAPI:
     def __init__(self, config=None, username=None, password=None):
@@ -31,10 +34,11 @@ class WhatAPI:
             self.password = config.get('login', 'password')
         else:
             self.username = username
-            self.password = password	
+            self.password = password
         self._login()
 
     def _login(self):
+        '''Logs in user and gets authkey from server'''
         loginpage = 'http://what.cd/login.php'
         data = {'username': self.username,
                 'password': self.password}
@@ -45,8 +49,9 @@ class WhatAPI:
         self.authkey = accountinfo["response"]["authkey"]
 
     def request(self, action, **kwargs):
+        '''Makes an AJAX request at a given action page'''
         ajaxpage = 'http://what.cd/ajax.php'
-        params = {'action': action }
+        params = {'action': action}
         if self.authkey:
             params['auth'] = self.authkey
         params.update(kwargs)
