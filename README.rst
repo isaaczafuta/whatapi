@@ -1,7 +1,7 @@
 whatapi
 =======
 
-This project is a simple wrapper around What.cd AJAX API.
+This project is a simple wrapper around the What.cd AJAX API.
 
 Example usage:
 
