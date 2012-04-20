@@ -63,3 +63,27 @@ class WhatAPI:
             return parsed
         except ValueError:
             raise RequestException
+    
+    def get_artist(self, id=None, format='MP3', best_seeded=True):
+        res = self.request('artist', id=id)
+        torrentgroups = res['response']['torrentgroup']
+        keep_releases = []
+        for release in torrentgroups:
+            torrents = release['torrent']
+            best_torrent = torrents[0]
+            keeptorrents = []
+            for t in torrents:
+                if t['format'] == format:
+                    if best_seeded:
+                        if t['seeders'] > best_torrent['seeders']:
+                            keeptorrents = [t]
+                            best_torrent = t
+                    else:
+                        keeptorrents.append(t)
+            release['torrent'] = list(keeptorrents)
+            if len(release['torrent']):
+                keep_releases.append(release)
+        res['response']['torrentgroup'] = keep_releases
+        return res
+
+
