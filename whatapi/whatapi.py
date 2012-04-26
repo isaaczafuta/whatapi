@@ -55,7 +55,7 @@ class WhatAPI:
         if self.authkey:
             params['auth'] = self.authkey
         params.update(kwargs)
-        r = self.session.get(ajaxpage, params=params)
+        r = self.session.get(ajaxpage, params=params, allow_redirects=False)
         try:
             parsed = json.loads(r.content)
             if parsed["status"] != "success":
