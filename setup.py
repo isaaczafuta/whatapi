@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+import whatapi
 
 with open('README.rst') as f:
     readme = f.read()
