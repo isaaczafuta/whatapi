@@ -1,3 +1,2 @@
-include *.txt
-recursive-include examples *.txt *.py
-prune examples/sample?/build
+include README.rst
+include LICENSE
