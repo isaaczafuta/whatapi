@@ -3,17 +3,10 @@ import json
 import requests
 
 headers = {
-    'Connection': 'keep-alive',
-    'Cache-Control': 'max-age=0',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3)'\
-        'AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.79'\
-        'Safari/535.11',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9'\
-        ',*/*;q=0.8',
-    'Accept-Encoding': 'gzip,deflate,sdch',
-    'Accept-Language': 'en-US,en;q=0.8',
-    'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3'}
-
+    "Content-type": "application/x-www-form-urlencoded",
+    'Accept-Charset': 'utf-8',
+    'User-Agent': "whatapi [devilcius]"
+    }
 
 class LoginException(Exception):
     pass
@@ -39,28 +32,32 @@ class WhatAPI:
 
     def _login(self):
         '''Logs in user and gets authkey from server'''
-        loginpage = 'http://what.cd/login.php'
+        loginpage = 'https://ssl.what.cd/login.php'
         data = {'username': self.username,
-                'password': self.password}
-        r = self.session.post(loginpage, data=data)
-        if r.status_code != 302 or r.headers['location'] != 'index.php':
+                'password': self.password,
+                'keeplogged': 1,
+                'login': 'Login'
+        }
+        r = self.session.post(loginpage, data=data, allow_redirects=False)
+        print r.status_code
+        if r.status_code != 302:
             raise LoginException
         accountinfo = self.request("index")
         self.authkey = accountinfo["response"]["authkey"]
 
     def request(self, action, **kwargs):
         '''Makes an AJAX request at a given action page'''
-        ajaxpage = 'http://what.cd/ajax.php'
+        ajaxpage = 'https://ssl.what.cd/ajax.php'
         params = {'action': action}
         if self.authkey:
             params['auth'] = self.authkey
         params.update(kwargs)
+
         r = self.session.get(ajaxpage, params=params, allow_redirects=False)
         try:
-            parsed = json.loads(r.content)
-            if parsed["status"] != "success":
+            if r.json["status"] != "success":
                 raise RequestException
-            return parsed
+            return r.json
         except ValueError:
             raise RequestException
     

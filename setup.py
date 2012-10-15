@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 import whatapi
 
-with open('README.rst') as f:
+with open('README.txt') as f:
     readme = f.read()
 
-with open('LICENSE') as f:
+with open('LICENSE.txt') as f:
     license = f.read()
 
 setup(
