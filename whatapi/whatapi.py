@@ -3,9 +3,9 @@ import json
 import requests
 
 headers = {
-    "Content-type": "application/x-www-form-urlencoded",
+    'Content-type': 'application/x-www-form-urlencoded',
     'Accept-Charset': 'utf-8',
-    'User-Agent': "whatapi [devilcius]"
+    'User-Agent': 'whatapi [isaaczafuta]'
     }
 
 class LoginException(Exception):
@@ -39,7 +39,6 @@ class WhatAPI:
                 'login': 'Login'
         }
         r = self.session.post(loginpage, data=data, allow_redirects=False)
-        print r.status_code
         if r.status_code != 302:
             raise LoginException
         accountinfo = self.request("index")
@@ -60,27 +59,3 @@ class WhatAPI:
             return r.json
         except ValueError:
             raise RequestException
-    
-    def get_artist(self, id=None, format='MP3', best_seeded=True):
-        res = self.request('artist', id=id)
-        torrentgroups = res['response']['torrentgroup']
-        keep_releases = []
-        for release in torrentgroups:
-            torrents = release['torrent']
-            best_torrent = torrents[0]
-            keeptorrents = []
-            for t in torrents:
-                if t['format'] == format:
-                    if best_seeded:
-                        if t['seeders'] > best_torrent['seeders']:
-                            keeptorrents = [t]
-                            best_torrent = t
-                    else:
-                        keeptorrents.append(t)
-            release['torrent'] = list(keeptorrents)
-            if len(release['torrent']):
-                keep_releases.append(release)
-        res['response']['torrentgroup'] = keep_releases
-        return res
-
-
