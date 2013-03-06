@@ -18,7 +18,8 @@ class RequestException(Exception):
 
 class WhatAPI:
     def __init__(self, config=None, username=None, password=None):
-        self.session = requests.session(headers=headers)
+        self.session = requests.Session()
+        self.session.headers = headers
         self.authkey = None
         if config:
             config = ConfigParser()
@@ -54,8 +55,9 @@ class WhatAPI:
 
         r = self.session.get(ajaxpage, params=params, allow_redirects=False)
         try:
-            if r.json["status"] != "success":
+            json_response = r.json()
+            if json_response["status"] != "success":
                 raise RequestException
-            return r.json
+            return json_response
         except ValueError:
             raise RequestException
