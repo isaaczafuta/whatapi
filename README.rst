@@ -11,5 +11,7 @@ Example usage:
     >>> apihandle = whatapi.WhatAPI(username='me', password='secret')
     >>> apihandle.request("browse", searchstr="Talulah Gosh")
     ...
+    >>> apihandle.get_torrent(1234567)
+    ...
 
 API available at  `Gwindow's API page <https://github.com/Gwindow/WhatAPI>`_ or via the JSON API page on What.
