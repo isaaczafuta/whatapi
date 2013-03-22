@@ -21,6 +21,7 @@ class WhatAPI:
         self.session = requests.Session()
         self.session.headers = headers
         self.authkey = None
+        self.passkey = None
         if config:
             config = ConfigParser()
             config.read(config)
@@ -44,6 +45,19 @@ class WhatAPI:
             raise LoginException
         accountinfo = self.request("index")
         self.authkey = accountinfo["response"]["authkey"]
+        self.passkey = accountinfo["response"]["passkey"]
+
+    def get_torrent(self, torrent_id):
+        '''Downloads the torrent at torrent_id using the authkey and passkey'''
+        torrentpage = 'https://ssl.what.cd/torrents.php'
+        params = {'action': 'download', 'id': torrent_id}
+        if self.authkey:
+            params['authkey'] = self.authkey
+            params['torrent_pass'] = self.passkey
+        r = self.session.get(torrentpage, params=params, allow_redirects=False)
+        if r.status_code == 200 and 'application/x-bittorrent' in r.headers['content-type']:
+            return r.content
+        return None
 
     def request(self, action, **kwargs):
         '''Makes an AJAX request at a given action page'''
