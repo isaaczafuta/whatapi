@@ -1,5 +1,4 @@
 from ConfigParser import ConfigParser
-import json
 import requests
 
 headers = {
