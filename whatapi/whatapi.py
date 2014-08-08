@@ -16,7 +16,7 @@ class RequestException(Exception):
 
 
 class WhatAPI:
-    def __init__(self, config=None, username=None, password=None):
+    def __init__(self, config=None, username=None, password=None, cookies=None):
         self.session = requests.Session()
         self.session.headers = headers
         self.authkey = None
@@ -29,10 +29,26 @@ class WhatAPI:
         else:
             self.username = username
             self.password = password
-        self._login()
+        if cookies:
+            self.session.cookies = cookies
+            try:
+                self._auth()
+            except RequestException:
+                self._login()
+        else:
+            self._login()
+
+    def _auth(self):
+        '''Gets auth key from server'''
+        try:
+            accountinfo = self.request("index")
+        except RequestException:
+            raise
+        self.authkey = accountinfo["response"]["authkey"]
+        self.passkey = accountinfo["response"]["passkey"]
 
     def _login(self):
-        '''Logs in user and gets authkey from server'''
+        '''Logs in user'''
         loginpage = 'https://ssl.what.cd/login.php'
         data = {'username': self.username,
                 'password': self.password,
@@ -42,9 +58,7 @@ class WhatAPI:
         r = self.session.post(loginpage, data=data, allow_redirects=False)
         if r.status_code != 302:
             raise LoginException
-        accountinfo = self.request("index")
-        self.authkey = accountinfo["response"]["authkey"]
-        self.passkey = accountinfo["response"]["passkey"]
+        self._auth()
 
     def get_torrent(self, torrent_id):
         '''Downloads the torrent at torrent_id using the authkey and passkey'''
