@@ -14,4 +14,17 @@ Example usage:
     >>> apihandle.get_torrent(1234567)
     ...
 
+It's strongly recommended that your script implements saving/loading session cookies to prevent overloading the server.
+
+Example:
+
+::
+
+    >>> import whatapi
+    >>> import cPickle as pickle
+    >>> cookies = pickle.load(open('cookies.dat', 'rb'))
+    >>> apihandle = whatapi.WhatAPI(username='me', password='me', cookies=cookies)
+    ...
+    >>> pickle.dump(apihandle.session.cookies, open('cookies.dat', 'wb'))
+
 API available at  `Gwindow's API page <https://github.com/Gwindow/WhatAPI>`_ or via the JSON API page on What.
