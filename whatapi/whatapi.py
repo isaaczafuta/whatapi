@@ -40,10 +40,7 @@ class WhatAPI:
 
     def _auth(self):
         '''Gets auth key from server'''
-        try:
-            accountinfo = self.request("index")
-        except RequestException:
-            raise
+        accountinfo = self.request("index")
         self.authkey = accountinfo["response"]["authkey"]
         self.passkey = accountinfo["response"]["passkey"]
 
