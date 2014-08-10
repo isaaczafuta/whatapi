@@ -1,4 +1,4 @@
-from ConfigParser import ConfigParser
+from ConfigParser import RawConfigParser
 import requests
 import time
 
@@ -23,7 +23,7 @@ class WhatAPI:
         self.authkey = None
         self.passkey = None
         if config_file:
-            config = ConfigParser()
+            config = RawConfigParser()
             config.read(config_file)
             self.username = config.get('login', 'username')
             self.password = config.get('login', 'password')
