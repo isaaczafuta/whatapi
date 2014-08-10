@@ -16,14 +16,14 @@ class RequestException(Exception):
 
 
 class WhatAPI:
-    def __init__(self, config=None, username=None, password=None, cookies=None):
+    def __init__(self, config_file=None, username=None, password=None, cookies=None):
         self.session = requests.Session()
         self.session.headers = headers
         self.authkey = None
         self.passkey = None
-        if config:
+        if config_file:
             config = ConfigParser()
-            config.read(config)
+            config.read(config_file)
             self.username = config.get('login', 'username')
             self.password = config.get('login', 'password')
         else:
