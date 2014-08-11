@@ -1,5 +1,6 @@
 from ConfigParser import ConfigParser
 import requests
+import time
 
 headers = {
     'Content-type': 'application/x-www-form-urlencoded',
@@ -65,6 +66,7 @@ class WhatAPI:
             params['authkey'] = self.authkey
             params['torrent_pass'] = self.passkey
         r = self.session.get(torrentpage, params=params, allow_redirects=False)
+        time.sleep(2)
         if r.status_code == 200 and 'application/x-bittorrent' in r.headers['content-type']:
             return r.content
         return None
@@ -84,6 +86,7 @@ class WhatAPI:
         params.update(kwargs)
 
         r = self.session.get(ajaxpage, params=params, allow_redirects=False)
+        time.sleep(2)
         try:
             json_response = r.json()
             if json_response["status"] != "success":
