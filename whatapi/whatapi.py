@@ -69,6 +69,12 @@ class WhatAPI:
             return r.content
         return None
 
+    def logout(self):
+        '''Logs out user'''
+        logoutpage = 'https://ssl.what.cd/logout.php'
+        params = {'auth': self.authkey}
+        self.session.get(logoutpage, params=params, allow_redirects=False)
+
     def request(self, action, **kwargs):
         '''Makes an AJAX request at a given action page'''
         ajaxpage = 'https://ssl.what.cd/ajax.php'
