@@ -1,4 +1,7 @@
-from ConfigParser import ConfigParser
+try:
+    from ConfigParser import ConfigParser
+except ImportError:
+    import configparser as ConfigParser # py3k support
 import requests
 import time
 
