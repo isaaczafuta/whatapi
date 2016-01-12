@@ -92,8 +92,13 @@ class WhatAPI:
         time.sleep(2)
         try:
             json_response = r.json()
-            if json_response["status"] != "success":
-                raise RequestException
-            return json_response
+            if "status" in json_response and json_response["status"] == "success":
+                return json_response
+            if "error" in json_response:
+                raise RequestException(json_response["error"])
+            if "status" in json_response:
+                raise RequestException(json_response["status"])
+            import pprint
+            raise RequestException(pprint.pformat(json_response))
         except ValueError:
             raise RequestException
