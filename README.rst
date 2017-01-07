@@ -1,7 +1,15 @@
 whatapi
 =======
 
-This project is a simple wrapper around the What.cd AJAX API.
+This project is a simple wrapper around the What.cd AJAX API. Also compatible
+with what-like trackers such as pth/apollo.
+
+Available via PyPI via pip:
+
+::
+
+    # pip install whatapi
+
 
 Example usage:
 
@@ -13,6 +21,18 @@ Example usage:
     ...
     >>> apihandle.get_torrent(1234567)
     ...
+
+
+To use another tracker:
+
+::
+
+    >>> import whatapi
+    >>> apihandle = whatapi.WhatAPI(username='me', password='secret',
+                                    server='https://passtheheadphones.me')
+    >>> apihandle.request("browse", searchstr="The Beatles")
+    ...
+
 
 It's strongly recommended that your script implements saving/loading session cookies to prevent overloading the server.
 
