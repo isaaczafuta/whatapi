@@ -20,11 +20,13 @@ class RequestException(Exception):
 
 
 class WhatAPI:
-    def __init__(self, config_file=None, username=None, password=None, cookies=None):
+    def __init__(self, config_file=None, username=None, password=None, cookies=None,
+                 server="https://ssl.what.cd"):
         self.session = requests.Session()
         self.session.headers = headers
         self.authkey = None
         self.passkey = None
+        self.server = server
         if config_file:
             config = ConfigParser()
             config.read(config_file)
@@ -50,7 +52,7 @@ class WhatAPI:
 
     def _login(self):
         '''Logs in user'''
-        loginpage = 'https://ssl.what.cd/login.php'
+        loginpage = self.server + '/login.php'
         data = {'username': self.username,
                 'password': self.password,
                 'keeplogged': 1,
@@ -63,7 +65,7 @@ class WhatAPI:
 
     def get_torrent(self, torrent_id):
         '''Downloads the torrent at torrent_id using the authkey and passkey'''
-        torrentpage = 'https://ssl.what.cd/torrents.php'
+        torrentpage = self.server + '/torrents.php'
         params = {'action': 'download', 'id': torrent_id}
         if self.authkey:
             params['authkey'] = self.authkey
@@ -76,13 +78,13 @@ class WhatAPI:
 
     def logout(self):
         '''Logs out user'''
-        logoutpage = 'https://ssl.what.cd/logout.php'
+        logoutpage = self.server + '/logout.php'
         params = {'auth': self.authkey}
         self.session.get(logoutpage, params=params, allow_redirects=False)
 
     def request(self, action, **kwargs):
         '''Makes an AJAX request at a given action page'''
-        ajaxpage = 'https://ssl.what.cd/ajax.php'
+        ajaxpage = self.server + '/ajax.php'
         params = {'action': action}
         if self.authkey:
             params['auth'] = self.authkey
