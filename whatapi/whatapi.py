@@ -1,7 +1,7 @@
 try:
     from ConfigParser import ConfigParser
 except ImportError:
-    import configparser as ConfigParser # py3k support
+    from configparser import ConfigParser # py3k support
 import requests
 import time
 
