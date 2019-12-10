@@ -27,7 +27,7 @@ class WhatAPI:
         self.authkey = None
         self.passkey = None
         self.server = server
-        self.throttler = throttler if throttler else Throttler(5, 10)
+        self.throttler = Throttler(5, 10) if throttler is None else throttler
         if config_file:
             config = ConfigParser()
             config.read(config_file)
