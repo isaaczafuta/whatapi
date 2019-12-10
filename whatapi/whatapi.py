@@ -63,8 +63,11 @@ class WhatAPI:
             raise LoginException
         self._auth()
 
-    def get_torrent(self, torrent_id):
-        '''Downloads the torrent at torrent_id using the authkey and passkey'''
+    def get_torrent(self, torrent_id, full_response=False):
+        '''Downloads and returns the torrent file at torrent_id
+        
+        full_response: Returns the full response object (including headers) instead of a torrent file
+        '''
         torrentpage = self.server + '/torrents.php'
         params = {'action': 'download', 'id': torrent_id}
         if self.authkey:
@@ -73,7 +76,7 @@ class WhatAPI:
         r = self.session.get(torrentpage, params=params, allow_redirects=False)
         time.sleep(2)
         if r.status_code == 200 and 'application/x-bittorrent' in r.headers['content-type']:
-            return r.content
+            return r if full_response else r.content
         return None
 
     def logout(self):
