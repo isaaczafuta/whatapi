@@ -21,12 +21,13 @@ class RequestException(Exception):
 
 class WhatAPI:
     def __init__(self, config_file=None, username=None, password=None, cookies=None,
-                 server="https://ssl.what.cd"):
+                 server="https://ssl.what.cd", throttler=None):
         self.session = requests.Session()
         self.session.headers = headers
         self.authkey = None
         self.passkey = None
         self.server = server
+        self.throttler = Throttler(5, 10) if throttler is None else throttler
         if config_file:
             config = ConfigParser()
             config.read(config_file)
@@ -70,8 +71,9 @@ class WhatAPI:
         if self.authkey:
             params['authkey'] = self.authkey
             params['torrent_pass'] = self.passkey
+        if self.throttler:
+            self.throttler.throttle_request()
         r = self.session.get(torrentpage, params=params, allow_redirects=False)
-        time.sleep(2)
         if r.status_code == 200 and 'application/x-bittorrent' in r.headers['content-type']:
             return r.content
         return None
@@ -90,8 +92,9 @@ class WhatAPI:
             params['auth'] = self.authkey
         params.update(kwargs)
 
+        if self.throttler:
+            self.throttler.throttle_request()
         r = self.session.get(ajaxpage, params=params, allow_redirects=False)
-        time.sleep(2)
         try:
             json_response = r.json()
             if json_response["status"] != "success":
@@ -99,3 +102,19 @@ class WhatAPI:
             return json_response
         except ValueError:
             raise RequestException
+
+
+class Throttler(object):
+    def __init__(self, num_requests=5, per_seconds=10):
+        self.num_requests = num_requests
+        self.per_seconds = per_seconds
+        self.request_times = []
+
+    def throttle_request(self):
+        request_time = time.time()
+        if len(self.request_times) >= self.num_requests:
+            sleep_time = self.per_seconds - (request_time - self.request_times[0])
+            if sleep_time > 0:
+                time.sleep(sleep_time)
+            self.request_times = self.request_times[1:]
+        self.request_times.append(request_time)
