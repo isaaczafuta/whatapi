@@ -21,27 +21,40 @@ class RequestException(Exception):
 
 class WhatAPI:
     def __init__(self, config_file=None, username=None, password=None, cookies=None,
-                 server="https://ssl.what.cd", throttler=None):
-        self.session = requests.Session()
-        self.session.headers = headers
-        self.authkey = None
-        self.passkey = None
-        self.server = server
-        self.throttler = Throttler(5, 10) if throttler is None else throttler
+                 server="https://ssl.what.cd", throttler=None, apiKey=None):        
         if config_file:
             config = ConfigParser()
             config.read(config_file)
             self.username = config.get('login', 'username')
             self.password = config.get('login', 'password')
+            self.apiKey = config.get('login', 'apiKey')
         else:
             self.username = username
             self.password = password
+            self.apiKey = apiKey
+
+        # Setup session
+        self.session = requests.Session()
+        if apiKey:
+            headers['Authorization'] = "token " + apiKey        
+        self.session.headers = headers
+
+        self.authkey = None
+        self.passkey = None
+        self.server = server
+        self.throttler = Throttler(5, 10) if throttler is None else throttler
         if cookies:
             self.session.cookies = cookies
             try:
                 self._auth()
             except RequestException:
                 self._login()
+        elif apiKey:
+            try:
+                self._auth()
+            except:
+                print("Likely an invalid api key")
+                raise 
         else:
             self._login()
 
