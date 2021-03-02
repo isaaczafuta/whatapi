@@ -5,11 +5,7 @@ except ImportError:
 import requests
 import time
 
-headers = {
-    'Content-type': 'application/x-www-form-urlencoded',
-    'Accept-Charset': 'utf-8',
-    'User-Agent': 'whatapi [isaaczafuta]'
-    }
+
 
 class LoginException(Exception):
     pass
@@ -35,8 +31,13 @@ class WhatAPI:
 
         # Setup session
         self.session = requests.Session()
+        headers = {
+            'Content-type': 'application/x-www-form-urlencoded',
+            'Accept-Charset': 'utf-8',
+            'User-Agent': 'whatapi [isaaczafuta]'
+        }
         if apiKey:
-            headers['Authorization'] = "token " + apiKey        
+            headers['Authorization'] = apiKey        
         self.session.headers = headers
 
         self.authkey = None
