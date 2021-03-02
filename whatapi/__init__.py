@@ -1,3 +1,3 @@
-from .whatapi import WhatAPI
+from .whatapi import WhatAPI,Throttler
 
 __version__ = "0.2.0"
