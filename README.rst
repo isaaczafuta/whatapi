@@ -1,7 +1,7 @@
 whatapi
 =======
 
-This is a fork of [isaaczafuta/whatapi](https://github.com/isaaczafuta/whatapi). I have added support for API token authentication. It is also possible set your own values for the throttler
+This is a fork of `isaaczafuta/whatapi <https://github.com/isaaczafuta/whatapi>`_. I have added support for API token authentication. It is also possible set your own values for the throttler
 
 This project is a simple wrapper around the What.cd AJAX API. Also compatible
 with what-like trackers such as pth/apollo.
