@@ -52,12 +52,16 @@ class WhatAPI:
                 self._login()
         elif apiKey:
             try:
-                self._auth()
+                self._try_connection()
             except:
                 print("Likely an invalid api key")
                 raise 
         else:
             self._login()
+
+    def _try_connection(self):
+        ''' Try to connect to tracker '''
+        self.request("index")
 
     def _auth(self):
         '''Gets auth key from server'''
@@ -83,7 +87,7 @@ class WhatAPI:
         
         full_response: Returns the full response object (including headers) instead of a torrent file
         '''
-        torrentpage = self.server + '/torrents.php'
+        torrentpage = self.server + '/ajax.php'
         params = {'action': 'download', 'id': torrent_id}
         if self.authkey:
             params['authkey'] = self.authkey
