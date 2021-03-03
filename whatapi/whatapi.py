@@ -5,11 +5,7 @@ except ImportError:
 import requests
 import time
 
-headers = {
-    'Content-type': 'application/x-www-form-urlencoded',
-    'Accept-Charset': 'utf-8',
-    'User-Agent': 'whatapi [isaaczafuta]'
-    }
+
 
 class LoginException(Exception):
     pass
@@ -21,29 +17,51 @@ class RequestException(Exception):
 
 class WhatAPI:
     def __init__(self, config_file=None, username=None, password=None, cookies=None,
-                 server="https://ssl.what.cd", throttler=None):
-        self.session = requests.Session()
-        self.session.headers = headers
-        self.authkey = None
-        self.passkey = None
-        self.server = server
-        self.throttler = Throttler(5, 10) if throttler is None else throttler
+                 server="https://ssl.what.cd", throttler=None, apiKey=None):        
         if config_file:
             config = ConfigParser()
             config.read(config_file)
             self.username = config.get('login', 'username')
             self.password = config.get('login', 'password')
+            self.apiKey = config.get('login', 'apiKey')
         else:
             self.username = username
             self.password = password
+            self.apiKey = apiKey
+
+        # Setup session
+        self.session = requests.Session()
+        headers = {
+            'Content-type': 'application/x-www-form-urlencoded',
+            'Accept-Charset': 'utf-8',
+            'User-Agent': 'whatapi [isaaczafuta]'
+        }
+        if apiKey:
+            headers['Authorization'] = apiKey        
+        self.session.headers = headers
+
+        self.authkey = None
+        self.passkey = None
+        self.server = server
+        self.throttler = Throttler(5, 10) if throttler is None else throttler
         if cookies:
             self.session.cookies = cookies
             try:
                 self._auth()
             except RequestException:
                 self._login()
+        elif apiKey:
+            try:
+                self._try_connection()
+            except:
+                print("Likely an invalid api key")
+                raise 
         else:
             self._login()
+
+    def _try_connection(self):
+        ''' Try to connect to tracker '''
+        self.request("index")
 
     def _auth(self):
         '''Gets auth key from server'''
@@ -69,7 +87,7 @@ class WhatAPI:
         
         full_response: Returns the full response object (including headers) instead of a torrent file
         '''
-        torrentpage = self.server + '/torrents.php'
+        torrentpage = self.server + '/ajax.php'
         params = {'action': 'download', 'id': torrent_id}
         if self.authkey:
             params['authkey'] = self.authkey
