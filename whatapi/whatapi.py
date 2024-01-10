@@ -21,7 +21,7 @@ class RequestException(Exception):
 
 class WhatAPI:
     def __init__(self, config_file=None, username=None, password=None, cookies=None,
-                 server="https://ssl.what.cd", throttler=None):
+                 server="https://ssl.what.cd", throttler=None, two_factor=None):
         self.session = requests.Session()
         self.session.headers = headers
         self.authkey = None
@@ -33,9 +33,11 @@ class WhatAPI:
             config.read(config_file)
             self.username = config.get('login', 'username')
             self.password = config.get('login', 'password')
+            self.two_factor = config.get('login', 'two_factor')
         else:
             self.username = username
             self.password = password
+            self.two_factor = two_factor
         if cookies:
             self.session.cookies = cookies
             try:
@@ -59,6 +61,9 @@ class WhatAPI:
                 'keeplogged': 1,
                 'login': 'Login'
         }
+        if self.two_factor is not None:
+            data['qrcode_confirm'] = self.two_factor
+
         r = self.session.post(loginpage, data=data, allow_redirects=False)
         if r.status_code != 302:
             raise LoginException

@@ -16,7 +16,7 @@ Example usage:
 ::
 
     >>> import whatapi
-    >>> apihandle = whatapi.WhatAPI(username='me', password='secret')
+    >>> apihandle = whatapi.WhatAPI(username='me', password='secret', two_factor=None)
     >>> apihandle.request("browse", searchstr="Talulah Gosh")
     ...
     >>> apihandle.get_torrent(1234567)
@@ -28,7 +28,7 @@ To use another tracker:
 ::
 
     >>> import whatapi
-    >>> apihandle = whatapi.WhatAPI(username='me', password='secret',
+    >>> apihandle = whatapi.WhatAPI(username='me', password='secret', two_factor='actfast',
                                     server='https://passtheheadphones.me')
     >>> apihandle.request("browse", searchstr="The Beatles")
     ...
