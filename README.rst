@@ -16,7 +16,7 @@ Example usage:
 ::
 
     >>> import whatapi
-    >>> apihandle = whatapi.WhatAPI(username='me', password='secret')
+    >>> apihandle = whatapi.WhatAPI(username='me', password='secret', update_payload={'qr_confirm': 'code'})
     >>> apihandle.request("browse", searchstr="Talulah Gosh")
     ...
     >>> apihandle.get_torrent(1234567)

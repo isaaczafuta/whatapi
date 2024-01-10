@@ -21,13 +21,14 @@ class RequestException(Exception):
 
 class WhatAPI:
     def __init__(self, config_file=None, username=None, password=None, cookies=None,
-                 server="https://ssl.what.cd", throttler=None):
+                 server="https://ssl.what.cd", throttler=None, update_payload={}):
         self.session = requests.Session()
         self.session.headers = headers
         self.authkey = None
         self.passkey = None
         self.server = server
         self.throttler = Throttler(5, 10) if throttler is None else throttler
+        self.update_payload = update_payload
         if config_file:
             config = ConfigParser()
             config.read(config_file)
@@ -59,6 +60,8 @@ class WhatAPI:
                 'keeplogged': 1,
                 'login': 'Login'
         }
+        data.update(self.update_payload)
+
         r = self.session.post(loginpage, data=data, allow_redirects=False)
         if r.status_code != 302:
             raise LoginException
